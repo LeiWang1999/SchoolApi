@@ -5,6 +5,13 @@ const grade_url = "http://jwgl.njtech.edu.cn/cjcx/cjcx_cxDgXscj.html?doType=quer
 
 class CourseService extends Service {
     async post_grade_data(year, term, session) {
+        // 校验
+        if (!parseInt(year) || parseInt(year) > (new Date().getFullYear())) {
+            return {
+                success: false,
+                message: "请求课程年份出错"
+            }
+        }
         //   默认第一学期
         let form_term = '3';
         if (term === '1') {
@@ -42,8 +49,22 @@ class CourseService extends Service {
         }
         const ctx = this.ctx;
         const result = await ctx.curl(grade_url, options);
-        console.log(result)
+        const response_data = JSON.parse(result.data.toString());
+        const courseitems = response_data.items;
+        const grade = courseitems.map(currentValue => {
+            return {
+                name: currentValue.kcmc,
+                grade: currentValue.bfzcj,
+                point: currentValue.jd,
+                teacher: currentValue.jsxm
+            }
+        })
 
+        return {
+            success: true,
+            message: "请求课程成绩成功",
+            grade: grade
+        };
     }
 }
 

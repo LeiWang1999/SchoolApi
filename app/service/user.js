@@ -40,15 +40,20 @@ class UserService extends Service {
     }
     const ctx = this.ctx;
     const result = await ctx.curl(url, options);
-    session = result.headers['set-cookie']
     const regValue = '用户名或密码不正确'
     if (result.data.toString().indexOf(regValue) > 0) {
-      console.log(regValue)
+      return {
+        success: false,
+        message: regValue
+      }
     }
     else {
-      console.log("登陆成功")
+      return {
+        success: true,
+        message: '登陆成功',
+        session: result.headers['set-cookie']
+      }
     }
-    await this.service.course.post_grade_data('2019', '1', session)
   }
 }
 
