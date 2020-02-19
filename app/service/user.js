@@ -13,8 +13,9 @@ const grade_url = "http://jwgl.njtech.edu.cn/cjcx/cjcx_cxDgXscj.html?doType=quer
 
 class UserService extends Service {
   async login(username, password, time) {
-    let { token, session } = await this.service.common.get_csrf_token(url, time);
-    let { modulus, exponent, sessionKey } = await this.service.common.get_public_key(key_url, session, time);
+
+    let { modulus, exponent, session } = await this.service.common.get_public_key(key_url, time);
+    let { token } = await this.service.common.get_csrf_token(url, session, time);
     let enpassword = await this.service.common.process_public(password, modulus, exponent);
     let data = {
       'csrftoken': token,
@@ -23,14 +24,16 @@ class UserService extends Service {
       'yhm': username
     };
     let headers = {
+      'Host': 'jwgl.njtech.edu.cn',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0',
       'Accept': 'text/html, */*; q=0.01',
       'Accept-Encoding': 'gzip, deflate',
       'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0',
-      'Connection': 'keep-alive',
       'Referer': url + time,
-      'Cookie': session,
       'Upgrade-Insecure-Requests': '1',
+      'Cookie': session,
+      'Connection': 'keep-alive',
+      "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
     }
 
     const options = {
@@ -40,6 +43,7 @@ class UserService extends Service {
     }
     const ctx = this.ctx;
     const result = await ctx.curl(url, options);
+    session = result.headers['set-cookie']
     console.log(result);
   }
 }
