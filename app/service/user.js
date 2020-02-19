@@ -1,7 +1,6 @@
 'use strict';
 
 const Service = require('egg').Service;
-
 // 教务系统登录路径
 const url = "http://jwgl.njtech.edu.cn/xtgl/login_slogin.html?language=zh_CN&_t="
 // 请求PublicKey的URL
@@ -13,13 +12,11 @@ const grade_url = "http://jwgl.njtech.edu.cn/cjcx/cjcx_cxDgXscj.html?doType=quer
 
 class UserService extends Service {
   async login(username, password, time) {
-
     let { modulus, exponent, session } = await this.service.common.get_public_key(key_url, time);
     let { token } = await this.service.common.get_csrf_token(url, session, time);
     let enpassword = await this.service.common.process_public(password, modulus, exponent);
     let data = {
       'csrftoken': token,
-      'mm': enpassword,
       'mm': enpassword,
       'yhm': username
     };
@@ -44,7 +41,14 @@ class UserService extends Service {
     const ctx = this.ctx;
     const result = await ctx.curl(url, options);
     session = result.headers['set-cookie']
-    console.log(result);
+    const regValue = '用户名或密码不正确'
+    if (result.data.toString().indexOf(regValue) > 0) {
+      console.log(regValue)
+    }
+    else {
+      console.log("登陆成功")
+    }
+    await this.service.course.post_grade_data('2019', '1', session)
   }
 }
 

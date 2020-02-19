@@ -4,6 +4,7 @@ const Service = require('egg').Service;
 // 解析crsf_token用的
 const cheerio = require('cheerio');
 const NodeRSA = require('node-rsa');
+const getenPassword = require('../utils/rsa')
 
 
 
@@ -55,17 +56,9 @@ class CommonService extends Service {
     return { token: csrf_token, session }
   }
   async process_public(password, modulus, exponent) {
-    let rsaKey = new NodeRSA();
-    rsaKey.importKey({
-      n: Buffer.from(modulus, 'base64'),
-      e: Buffer.from(exponent, 'base64')
-    })
-    console.log(rsaKey.exportKey('pkcs1-public'))
-    const enPassword = rsaKey.encrypt(Buffer.from(password)).toString('base64')
-
+    const enPassword = getenPassword(password, modulus, exponent);
     return enPassword
   }
-
 }
 
 module.exports = CommonService;
