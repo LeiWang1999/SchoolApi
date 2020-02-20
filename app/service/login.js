@@ -5,12 +5,10 @@ const Service = require('egg').Service;
 const url = "http://jwgl.njtech.edu.cn/xtgl/login_slogin.html?language=zh_CN&_t="
 // 请求PublicKey的URL
 const key_url = "http://jwgl.njtech.edu.cn/xtgl/login_getPublicKey.html?time="
-// 获取成绩路径
-const grade_url = "http://jwgl.njtech.edu.cn/cjcx/cjcx_cxDgXscj.html?doType=query&gnmkdm=N305005"
 
 
 
-class UserService extends Service {
+class LoginService extends Service {
   async login(username, password, time) {
     let { modulus, exponent, session } = await this.service.common.get_public_key(key_url, time);
     let { token } = await this.service.common.get_csrf_token(url, session, time);
@@ -57,4 +55,4 @@ class UserService extends Service {
   }
 }
 
-module.exports = UserService;
+module.exports = LoginService;

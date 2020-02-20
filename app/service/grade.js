@@ -3,7 +3,7 @@
 const Service = require('egg').Service;
 const grade_url = "http://jwgl.njtech.edu.cn/cjcx/cjcx_cxDgXscj.html?doType=query&gnmkdm=N305005"
 
-class CourseService extends Service {
+class GradeService extends Service {
     async post_grade_data(year, term, session) {
         // 校验
         if (!parseInt(year) || parseInt(year) > (new Date().getFullYear())) {
@@ -68,4 +68,4 @@ class CourseService extends Service {
     }
 }
 
-module.exports = CourseService;
+module.exports = GradeService;

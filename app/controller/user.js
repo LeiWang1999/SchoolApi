@@ -19,7 +19,7 @@ class UserController extends Controller {
         const time = await this.service.common.get_time();
         const loginInfo = await this.service.user.login(username, password, time);
         if (loginInfo.success) {
-            const gradeInfo = await this.service.course.post_grade_data(year, term, loginInfo.session)
+            const gradeInfo = await this.service.grade.post_grade_data(year, term, loginInfo.session)
             ctx.body = gradeInfo
         } else {
             ctx.body = {
