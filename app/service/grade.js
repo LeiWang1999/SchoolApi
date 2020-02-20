@@ -56,6 +56,7 @@ class GradeService extends Service {
         const grade = courseitems.map(currentValue => {
             return {
                 name: currentValue.kcmc,
+                credit: currentValue.xf,
                 grade: currentValue.bfzcj,
                 point: currentValue.jd,
                 teacher: currentValue.jsxm
