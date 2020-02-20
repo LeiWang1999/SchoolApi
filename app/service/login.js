@@ -1,23 +1,20 @@
 'use strict';
 
 const Service = require('egg').Service;
-// 教务系统登录路径
-const url = "http://jwgl.njtech.edu.cn/xtgl/login_slogin.html?language=zh_CN&_t="
-// 请求PublicKey的URL
-const key_url = "http://jwgl.njtech.edu.cn/xtgl/login_getPublicKey.html?time="
 
 
 
 class LoginService extends Service {
   async login(username, password, time) {
-    let { modulus, exponent, session } = await this.service.common.get_public_key(key_url, time);
-    let { token } = await this.service.common.get_csrf_token(url, session, time);
+    let { modulus, exponent, session } = await this.service.common.get_public_key(time);
+    let { token } = await this.service.common.get_csrf_token(session, time);
     let enpassword = await this.service.common.process_public(password, modulus, exponent);
     let data = {
       'csrftoken': token,
       'mm': enpassword,
       'yhm': username
     };
+    const url = await this.service.common.get_login_url();
     let headers = {
       'Host': 'jwgl.njtech.edu.cn',
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0',

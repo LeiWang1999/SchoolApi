@@ -7,25 +7,10 @@ class UserController extends Controller {
         const { ctx } = this;
         const { username, password } = ctx.request.body;
         const time = await this.service.common.get_time();
-        const loginInfo = await this.service.user.login(username, password, time);
+        const loginInfo = await this.service.login.login(username, password, time);
         ctx.body = {
             success: loginInfo.success,
             message: loginInfo.message
-        }
-    }
-    async grade() {
-        const { ctx } = this;
-        const { username, password, year, term } = ctx.request.body;
-        const time = await this.service.common.get_time();
-        const loginInfo = await this.service.user.login(username, password, time);
-        if (loginInfo.success) {
-            const gradeInfo = await this.service.grade.post_grade_data(year, term, loginInfo.session)
-            ctx.body = gradeInfo
-        } else {
-            ctx.body = {
-                success: false,
-                message: loginInfo.message
-            }
         }
     }
 }

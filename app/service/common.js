@@ -3,17 +3,35 @@
 const Service = require('egg').Service;
 // 解析crsf_token用的
 const cheerio = require('cheerio');
-const NodeRSA = require('node-rsa');
 const getenPassword = require('../utils/rsa')
 
-
+// 教务系统登录路径
+const login_url = "http://jwgl.njtech.edu.cn/xtgl/login_slogin.html?language=zh_CN&_t="
+// 请求PublicKey的URL
+const key_url = "http://jwgl.njtech.edu.cn/xtgl/login_getPublicKey.html?time="
+// 请求成绩的地址
+const grade_url = "http://jwgl.njtech.edu.cn/cjcx/cjcx_cxDgXscj.html?doType=query&gnmkdm=N305005"
+// 请求课程表地址
+const curriculum_url = "http://jwgl.njtech.edu.cn/kbcx/xskbcx_cxXsKb.html?gnmkdm=N2151"
 
 class CommonService extends Service {
 
   async get_time() {
     return Math.floor(Date.now() / 1000);
   }
-  async get_public_key(key_url, time) {
+  async get_login_url() {
+    return login_url
+  }
+  async get_key_url() {
+    return key_url
+  }
+  async get_grade_url() {
+    return grade_url
+  }
+  async get_curriculum_url() {
+    return curriculum_url
+  }
+  async get_public_key(time) {
     const ctx = this.ctx;
     let headers = {
       'Host': 'jwgl.njtech.edu.cn',
@@ -25,7 +43,8 @@ class CommonService extends Service {
     const options = {
       headers,
     }
-    const res = await ctx.curl(key_url + time, options);
+    const url = await this.service.common.get_key_url();
+    const res = await ctx.curl(url + time, options);
     const result = JSON.parse(res.data);
     let session = res.headers['set-cookie'];
     session = session[0].split(';')[0]
@@ -35,7 +54,7 @@ class CommonService extends Service {
       session: session
     }
   }
-  async get_csrf_token(url, session, time) {
+  async get_csrf_token(session, time) {
     const ctx = this.ctx;
     let headers = {
       'Host': 'jwgl.njtech.edu.cn',
@@ -48,6 +67,7 @@ class CommonService extends Service {
     const options = {
       headers,
     }
+    const url = await this.service.common.get_login_url();
     const res = await ctx.curl(url + time, options);
     const resultHtml = (res.data.toString());
     const cheerioModel = cheerio.load(resultHtml);

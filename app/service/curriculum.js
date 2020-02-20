@@ -2,16 +2,14 @@
 
 const Service = require('egg').Service;
 
-class GradeService extends Service {
-    async post_grade_data(year, term, session) {
-        // 校验
+class CurriculumService extends Service {
+    async post_curriculum_data(year, term, session) {
         if (!parseInt(year) || parseInt(year) > (new Date().getFullYear())) {
             return {
                 success: false,
-                message: "请求课程年份出错"
+                message: "请求课程表年份出错"
             }
         }
-
         //   默认第一学期
         let form_term = '3';
         if (term === '1') {
@@ -19,18 +17,11 @@ class GradeService extends Service {
         } else if (term === '2') {
             form_term = '12'
         }
-        const url = await this.service.common.get_grade_url();
         const data = {
-            '_search': 'false',
-            'nd': this.service.common.get_time(),
-            'queryModel.currentPage': '1',
-            'queryModel.showCount': '15',
-            'queryModel.sortName': '',
-            'queryModel.sortOrder': 'asc',
-            'time': '0',
             'xnm': year,
             'xqm': form_term
         }
+        const url = await this.service.common.get_curriculum_url();
         let headers = {
             'Host': 'jwgl.njtech.edu.cn',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0',
@@ -50,24 +41,33 @@ class GradeService extends Service {
         }
         const ctx = this.ctx;
         const result = await ctx.curl(url, options);
-
         const response_data = JSON.parse(result.data.toString());
-        const courseitems = response_data.items;
-        const grade = courseitems.map(currentValue => {
+        const practiceCourseList = response_data.sjkList;
+        const courseList = response_data.kbList;
+        const parcticeCourse = practiceCourseList.map(currentValue => {
             return {
-                name: currentValue.kcmc,
-                grade: currentValue.bfzcj,
-                point: currentValue.jd,
-                teacher: currentValue.jsxm
+                info: currentValue.sjkcgs
             }
         })
-
+        const course = courseList.map(currentValue => {
+            return {
+                name: currentValue.kcmc,
+                address: currentValue.cdmc,
+                week: currentValue.zcd,
+                day: currentValue.xqj,
+                period: currentValue.jcor,
+                teacher: currentValue.xm,
+                credit: currentValue.xf,
+                schedule: currentValue.kcxszc
+            }
+        })
         return {
             success: true,
-            message: "请求课程成绩成功",
-            grade: grade
+            message: "请求课程表成功",
+            parcticeCourse,
+            course
         };
     }
 }
 
-module.exports = GradeService;
+module.exports = CurriculumService;
