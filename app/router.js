@@ -8,4 +8,5 @@ module.exports = app => {
   router.post('/login', controller.user.login);
   router.post('/grade', controller.api.grade);
   router.post('/curriculum', controller.api.curriculum);
+  router.post('/schoolroom/empty', controller.api.schoolroom_empty);
 };

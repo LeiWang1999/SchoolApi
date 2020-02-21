@@ -12,9 +12,9 @@ class CurriculumService extends Service {
         }
         //   默认第一学期
         let form_term = '3';
-        if (term === '1') {
+        if (parseInt(term) === 1) {
             form_term = '3'
-        } else if (term === '2') {
+        } else if (parseInt(term) === 2) {
             form_term = '12'
         }
         const data = {

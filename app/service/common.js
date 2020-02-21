@@ -6,13 +6,15 @@ const cheerio = require('cheerio');
 const getenPassword = require('../utils/rsa')
 
 // 教务系统登录路径
-const login_url = "http://jwgl.njtech.edu.cn/xtgl/login_slogin.html?language=zh_CN&_t="
+const login_url = "https://jwgl.njtech.edu.cn/xtgl/login_slogin.html?language=zh_CN&_t="
 // 请求PublicKey的URL
-const key_url = "http://jwgl.njtech.edu.cn/xtgl/login_getPublicKey.html?time="
+const key_url = "https://jwgl.njtech.edu.cn/xtgl/login_getPublicKey.html?time="
 // 请求成绩的地址
-const grade_url = "http://jwgl.njtech.edu.cn/cjcx/cjcx_cxDgXscj.html?doType=query&gnmkdm=N305005"
+const grade_url = "https://jwgl.njtech.edu.cn/cjcx/cjcx_cxDgXscj.html?doType=query&gnmkdm=N305005"
 // 请求课程表地址
-const curriculum_url = "http://jwgl.njtech.edu.cn/kbcx/xskbcx_cxXsKb.html?gnmkdm=N2151"
+const curriculum_url = "https://jwgl.njtech.edu.cn/kbcx/xskbcx_cxXsKb.html?gnmkdm=N2151"
+// 请求空教室地址
+const schoolroom_empty_url = "https://jwgl.njtech.edu.cn/cdjy/cdjy_cxKxcdlb.html?doType=query&gnmkdm=N2155"
 
 class CommonService extends Service {
 
@@ -30,6 +32,9 @@ class CommonService extends Service {
   }
   async get_curriculum_url() {
     return curriculum_url
+  }
+  async get_schoolroom_empty_url() {
+    return schoolroom_empty_url
   }
   async get_public_key(time) {
     const ctx = this.ctx;
