@@ -21,6 +21,8 @@ class ApiController extends Controller {
     async curriculum() {
         const { ctx } = this;
         const { username, password, year, term } = ctx.request.body;
+        console.log(ctx.request.body)
+
         const time = await this.service.common.get_time();
         const loginInfo = await this.service.login.login(username, password, time);
         if (loginInfo.success) {
