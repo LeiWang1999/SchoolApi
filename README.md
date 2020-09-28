@@ -4,6 +4,8 @@ Njtech 正方教务系统信息 API
 
 Projected By Egg.js
 
+[Guide Page](http://leiblog.wang/%E6%AD%A3%E6%96%B9%E6%95%99%E5%8A%A1%E7%88%AC%E8%99%ABJavaScript%E7%89%88/)
+
 ## What We Support ?
 
 ### 成绩查询
